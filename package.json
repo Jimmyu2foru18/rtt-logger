@@ -1,0 +1,17 @@
+{
+  "name": "rtt-logger",
+  "version": "1.0.0",
+  "description": "RTT logging and monitoring solution",
+  "scripts": {
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "chart.js": "^3.7.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.17.0",
+    "jest": "^27.4.5"
+  }
+} 

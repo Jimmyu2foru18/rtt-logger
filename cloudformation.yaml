@@ -1,0 +1,100 @@
+# AWSTemplateFormatVersion: '2010-09-09'
+# Description: 'RTTLogger Infrastructure Stack'
+
+# Resources:
+#   RTTLoggerTable:
+#     Type: 'AWS::DynamoDB::Table'
+#     Properties:
+#       TableName: rtt_logs
+#       AttributeDefinitions:
+#         - AttributeName: clientId
+#           AttributeType: S
+#         - AttributeName: timestamp
+#           AttributeType: N
+#       KeySchema:
+#         - AttributeName: clientId
+#           KeyType: HASH
+#         - AttributeName: timestamp
+#           KeyType: RANGE
+#       BillingMode: PAY_PER_REQUEST
+#       StreamSpecification:
+#         StreamViewType: NEW_IMAGE
+#       TimeToLiveSpecification:
+#         AttributeName: ttl
+#         Enabled: true
+
+#   RTTLoggerBucket:
+#     Type: 'AWS::S3::Bucket'
+#     Properties:
+#       BucketName: !Sub '${AWS::StackName}-logs'
+#       LifecycleConfiguration:
+#         Rules:
+#           - Id: ArchiveRule
+#             Status: Enabled
+#             ExpirationInDays: 30
+
+#   RTTLoggerFunction:
+#     Type: 'AWS::Lambda::Function'
+#     Properties:
+#       Handler: udp_server.lambda_handler
+#       Role: !GetAtt LambdaExecutionRole.Arn
+#       Code:
+#         S3Bucket: !Ref RTTLoggerBucket
+#         S3Key: lambda/udp_server.zip
+#       Runtime: python3.8
+#       Timeout: 30
+#       MemorySize: 256
+
+#   UserPool:
+#     Type: 'AWS::Cognito::UserPool'
+#     Properties:
+#       UserPoolName: !Sub '${AWS::StackName}-users'
+#       AdminCreateUserConfig:
+#         AllowAdminCreateUserOnly: true
+#       Policies:
+#         PasswordPolicy:
+#           MinimumLength: 8
+#           RequireNumbers: true
+#           RequireSymbols: true
+#           RequireUppercase: true
+#           RequireLowercase: true
+
+#   RTTLoggerCache:
+#     Type: AWS::ElastiCache::CacheCluster
+#     Properties:
+#       Engine: redis
+#       CacheNodeType: cache.t3.micro
+#       NumCacheNodes: 1
+
+#   RTTLoggerLambda:
+#     Type: AWS::Lambda::Function
+#     Properties:
+#       Handler: udp_server.lambda_handler
+#       Runtime: python3.8
+#       Code:
+#         S3Bucket: !Ref DeploymentBucket
+#         S3Key: lambda/handler.zip
+#       Environment:
+#         Variables:
+#           DYNAMODB_TABLE: !Ref RTTLoggerTable
+#           S3_BUCKET: !Ref LogsBucket
+
+#   RTTWebSocketAPI:
+#     Type: AWS::ApiGatewayV2::Api
+#     Properties:
+#       Name: RTTLogger-WebSocket
+#       ProtocolType: WEBSOCKET
+#       RouteSelectionExpression: $request.body.action
+
+#   RTTAlarms:
+#     Type: AWS::CloudWatch::Alarm
+#     Properties:
+#       AlarmName: RTTLogger-HighLatency
+#       MetricName: RTTLatency
+#       Threshold: 1000
+#       EvaluationPeriods: 3
+
+# Outputs:
+#   UserPoolId:
+#     Description: 'Cognito User Pool ID'
+#     Value: !Ref UserPool 

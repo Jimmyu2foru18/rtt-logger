@@ -1,0 +1,36 @@
+name: Deploy RTTLogger
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy Lambda functions
+        run: |
+          zip -r udp_handler.zip ./server/udp_server.py
+          zip -r rest_handler.zip ./server/rest_api.py
+          aws lambda update-function-code --function-name rtt-udp-handler --zip-file fileb://udp_handler.zip
+          aws lambda update-function-code --function-name rtt-rest-handler --zip-file fileb://rest_handler.zip
+
+      - name: Deploy frontend to S3
+        run: |
+          aws s3 sync ./client s3://rtt-logger-frontend --delete
+
+      - name: Update API Gateway
+        run: |
+          aws apigateway create-deployment --rest-api-id ${{ secrets.API_ID }} --stage-name prod
+
+      - name: Run tests
+        run: python -m pytest tests/ 
