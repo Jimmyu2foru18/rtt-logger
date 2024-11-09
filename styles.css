@@ -68,12 +68,10 @@ button {
     color: #2196F3;
 }
 
-/* Add CSS containment for better performance */
 .stats-container {
     contain: content;
 }
 
-/* Optimize animations */
 @keyframes updateValue {
     from { opacity: 0.8; }
     to { opacity: 1; }
