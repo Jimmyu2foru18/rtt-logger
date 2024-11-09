@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RTT Logger</title>
     <link rel="stylesheet" href="css/styles.css">
-    <!-- Include Chart.js for real-time graph visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Add resource hints -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preload" href="js/chart_handler.js" as="script">
     <link rel="preload" href="js/udp_client.js" as="script">
 
-    <!-- Defer non-critical CSS -->
     <link rel="stylesheet" href="css/non-critical.css" media="print" onload="this.media='all'">
-
-    <!-- Add performance metrics -->
     <script>
         performance.mark('app-start');
     </script>
@@ -23,12 +18,10 @@
 <body>
     <div class="container">
         <h1>RTT Logger</h1>
-        <!-- Control buttons for starting/stopping RTT tests -->
         <div class="controls">
             <button id="startTest">Start RTT Test</button>
             <button id="stopTest">Stop RTT Test</button>
         </div>
-        <!-- Real-time statistics display -->
         <div class="stats">
             <div class="stat-box">
                 <h3>Current RTT</h3>
@@ -47,7 +40,6 @@
                 <p id="connectionStatus">Disconnected</p>
             </div>
         </div>
-        <!-- Add this after the existing stats div -->
         <div class="advanced-stats">
             <h2>Advanced Statistics</h2>
             <div class="stats-grid">
@@ -81,7 +73,6 @@
                 </div>
             </div>
         </div>
-        <!-- Chart container for RTT visualization -->
         <div class="chart-container">
             <canvas id="rttChart"></canvas>
         </div>
