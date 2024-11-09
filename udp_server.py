@@ -10,11 +10,9 @@ from typing import Dict, List, Optional
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 
-# Initialize X-Ray
 xray_recorder.configure(service='RTTLogger-UDP')
 patch_all()
 
-# Data validation class
 @dataclass
 class RTTData:
     client_ip: str
@@ -24,7 +22,6 @@ class RTTData:
 
 class RTTServer:
     def __init__(self, host='127.0.0.1', port=12345):
-        # Set up logging
         self.logger = logging.getLogger('RTTLogger')
         self.logger.setLevel(logging.INFO)
         handler = logging.FileHandler('rtt_server.log')
@@ -33,19 +30,16 @@ class RTTServer:
         ))
         self.logger.addHandler(handler)
 
-        # Rate limiting
         self.rate_limits: Dict[str, List[float]] = {}
-        self.RATE_LIMIT_WINDOW = 60  # seconds
-        self.MAX_REQUESTS = 100  # per window
+        self.RATE_LIMIT_WINDOW = 60 
+        self.MAX_REQUESTS = 100 
 
-        # Connection pool
         self.db_pool = sqlite3.connect(
             'rtt_data.db',
             check_same_thread=False,
             timeout=30
         )
-        
-        # Initialize server
+
         try:
             self.host = host
             self.port = port
@@ -61,14 +55,12 @@ class RTTServer:
         current_time = time.time()
         if client_addr not in self.rate_limits:
             self.rate_limits[client_addr] = []
-        
-        # Clean old requests
+
         self.rate_limits[client_addr] = [
             t for t in self.rate_limits[client_addr]
             if current_time - t < self.RATE_LIMIT_WINDOW
         ]
-        
-        # Check limit
+
         if len(self.rate_limits[client_addr]) >= self.MAX_REQUESTS:
             return False
         
@@ -90,21 +82,17 @@ class RTTServer:
     @xray_recorder.capture('handle_client')
     def handle_client(self, data: bytes, addr: tuple):
         try:
-            # Rate limiting
             if not self.check_rate_limit(addr[0]):
                 self.logger.warning(f"Rate limit exceeded for {addr[0]}")
                 return
 
-            # Data validation
             message = json.loads(data.decode())
             validated_data = self.validate_data(message)
             if not validated_data:
                 return
 
-            # Process data
             response = self.process_data(validated_data)
-            
-            # Send response
+
             self.sock.sendto(json.dumps(response).encode(), addr)
             
         except Exception as e:
