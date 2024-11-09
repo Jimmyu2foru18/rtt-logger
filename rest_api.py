@@ -97,7 +97,5 @@ def get_rtt_logs():
         'data': [schema.dump(log) for log in logs]
     })
 
-# Add more endpoints with similar error handling and validation...
-
 if __name__ == '__main__':
     app.run(debug=False, port=5000) 
