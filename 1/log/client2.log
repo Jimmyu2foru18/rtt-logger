@@ -1,0 +1,18 @@
+
+=== New Session Started at Thu Dec 12 17:30:08 EST 2024 ===
+Packet 0: 60000 bytes, RTT=35ms, SUCCESS
+Packet 1: 60000 bytes, RTT=6ms, SUCCESS
+Packet 2: 60000 bytes, RTT=5ms, SUCCESS
+Packet 3: 60000 bytes, RTT=4ms, SUCCESS
+Packet 4: 60000 bytes, RTT=8ms, SUCCESS
+
+Summary: 5/5 packets successful, Average RTT: 11.60ms
+
+=== New Session Started at Thu Dec 12 17:41:25 EST 2024 ===
+Packet 0: 60000 bytes, RTT=30ms, SUCCESS
+Packet 1: 60000 bytes, RTT=3ms, SUCCESS
+Packet 2: 60000 bytes, RTT=3ms, SUCCESS
+Packet 3: 60000 bytes, RTT=4ms, SUCCESS
+Packet 4: 60000 bytes, RTT=2ms, SUCCESS
+
+Summary: 5/5 packets successful, Average RTT: 8.40ms
